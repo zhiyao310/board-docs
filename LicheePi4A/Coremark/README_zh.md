@@ -5,9 +5,14 @@ sys_var: null
 
 status: basics
 last_update: 2026-04-03
+
+model: Lichee Pi 4A
+profile: Coremark
 ---
 
 # RuyiSDK 基础示例
+
+可直接在开发板上进行编译和运行的示例，适合初学者快速上手。
 
 安装依赖包
 
@@ -18,11 +23,11 @@ sudo apt update; sudo apt install -y wget tar zstd xz-utils git build-essent
 安装ruyi包管理器
 
 ```
-wget https://mirror.iscas.ac.cn/ruyisdk/ruyi/tags/0.41.0/ruyi-0.41.0.riscv64
+wget https://fast-mirror.isrc.ac.cn/ruyisdk/ruyi/tags/0.47.0/ruyi.riscv64
 
-chmod +x ruyi-0.41.0.riscv64
+chmod +x ruyi-0.47.0.riscv64
 
-sudo cp -v ruyi-0.41.0.riscv64 /usr/local/bin/ruyi
+sudo cp -v ruyi-0.47.0.riscv64 /usr/local/bin/ruyi
 ```
 
 安装GCC和LLVM工具链
@@ -32,7 +37,6 @@ ruyi update
 
 ruyi install gnu-plct llvm-plct
 ```
-
 ## Coremark (GCC版)
 
 创建并激活ruyi虚拟环境（GCC）
@@ -116,6 +120,7 @@ clang -v
 cd coremark; make clean; make CC=clang XCFLAGS="-march=rv64imafdc_zicntr_zicsr_zifencei_zihpm_zfh_\
 xtheadba_xtheadbb_xtheadbs_xtheadcmo_\
 xtheadcondmov_xtheadfmemidx_xtheadmac_xtheadmemidx_xtheadmempair_xtheadsync" compile
+
 ./coremark.exe
 ```
 

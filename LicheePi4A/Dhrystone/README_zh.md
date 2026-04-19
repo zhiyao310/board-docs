@@ -5,6 +5,9 @@ sys_var: null
 
 status: others
 last_update: 2026-04-03
+
+model: Lichee Pi 4A
+profile: Dhrystone
 ---
 
 # RuyiSDK 性能评测示例

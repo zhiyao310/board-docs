@@ -5,9 +5,14 @@ sys_var: null
 
 status: basics
 last_update: 2026-04-03
+
+model: Lichee Pi 4A
+profile: Hello World
 ---
 
 # RuyiSDK 基础示例
+
+可直接在开发板上进行编译和运行的示例，适合初学者快速上手。
 
 安装依赖包
 
@@ -18,11 +23,11 @@ sudo apt update; sudo apt install -y wget tar zstd xz-utils git build-essent
 安装ruyi包管理器
 
 ```
-wget https://mirror.iscas.ac.cn/ruyisdk/ruyi/tags/0.41.0/ruyi-0.41.0.riscv64
+wget https://fast-mirror.isrc.ac.cn/ruyisdk/ruyi/tags/0.47.0/ruyi.riscv64
 
-chmod +x ruyi-0.41.0.riscv64
+chmod +x ruyi-0.47.0.riscv64
 
-sudo cp -v ruyi-0.41.0.riscv64 /usr/local/bin/ruyi
+sudo cp -v ruyi-0.47.0.riscv64 /usr/local/bin/ruyi
 ```
 
 安装GCC和LLVM工具链
@@ -55,14 +60,15 @@ riscv64-plct-linux-gnu-gcc -v
 编译并运行Hello World（GCC）
 
 ```
-cat << EOF > hello.c
+cat > hello.c << 'EOF'
 #include <stdio.h>
- 
+
 int main() {
-    printf("Hello, World!\n");
-    return 0;
+    printf("Hello, World!\n");
+    return 0;
 }
 EOF
+
 riscv64-plct-linux-gnu-gcc hello.c -o hello-gcc
 ./hello-gcc
 ```
@@ -120,9 +126,6 @@ debian@revos:/home$ source venv-llvm-plct/bin/rui activate
 Hello, World!
 《Rui venv-llvm-plct》 debian@revos:/home$
 ```
-
-
-
 
 退出ruyi GCC虚拟环境
 
