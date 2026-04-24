@@ -22,10 +22,55 @@
 ### **安装Docker**
 ```bash
 sudo apt update
-sudo apt install docker.io -y
-sudo systemctl start docker
-#拉取 HHB 的 Docker 镜像
-sudo docker pull hhb4tools/hhb:2.6.17
+sudo apt install -y ca-certificates curl
+```
+
+# 下载 Docker 官方安装脚本并执行
+```bash
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+```
+安装成功后查看docker及其状态:
+``bash
+docker --version
+sudo systemctl status docker
+```
+
+在终端显示如下：
+```text
+licheepi@licheepi-virtual-machine:~$ docker --version
+Docker version 29.4.1, build 055a478
+licheepi@licheepi-virtual-machine:~$ sudo systemctl status docker
+● docker.service - Docker Application Container Engine
+     Loaded: loaded (/lib/systemd/system/docker.service; enabled;>
+     Active: active (running) since Fri 2026-04-24 13:35:46 CST; 
+```
+将当前用户加入 docker 组（免 sudo 运行）
+```bash
+sudo usermod -aG docker $USER
+newgrp docker
+```
+
+拉取 HHB Docker 镜像
+```bash
+docker pull hhb4tools/hhb:2.6.17
+```
+如果下载慢，可使用国内用户加速：
+```bash
+sudo mkdir -p /etc/docker
+sudo tee /etc/docker/daemon.json <<-'EOF'
+{
+  "registry-mirrors": [
+    "https://docker.1panel.live",
+    "https://hub.rat.dev"
+  ]
+}
+EOF
+#重启docker服务
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+#拉取 HHB Docker 镜像
+docker pull hhb4tools/hhb:2.6.17
 ```
 ### **安装 RuyiSDK**
 ```bash
