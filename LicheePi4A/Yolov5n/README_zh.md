@@ -53,23 +53,6 @@ newgrp docker
 
 拉取 HHB Docker 镜像
 ```bash
-docker pull hhb4tools/hhb:2.6.17
-```
-如果下载慢，可使用国内用户加速：
-```bash
-sudo mkdir -p /etc/docker
-sudo tee /etc/docker/daemon.json <<-'EOF'
-{
-  "registry-mirrors": [
-    "https://docker.1panel.live",
-    "https://hub.rat.dev"
-  ]
-}
-EOF
-#重启docker服务
-sudo systemctl daemon-reload
-sudo systemctl restart docker
-#拉取 HHB Docker 镜像
 docker pull hhb4tools/hhb:latest
 ```
 创建容器，名字为hhb_env  
