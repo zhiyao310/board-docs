@@ -8,7 +8,7 @@
 
 | status | AI |
 
-| last\_update | 2026-04-23|
+| last\_update | 2026-04-27|
 
 | model | Lichee Pi 4A |
 
@@ -24,8 +24,9 @@
 sudo apt update
 sudo apt install -y ca-certificates curl
 ```
-```bash
+
 # 下载 Docker 官方安装脚本并执行
+```bash
 curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
 ```
@@ -106,20 +107,52 @@ sudo chown -R licheepi:licheepi /home/example
 cd /home/example/th1520_npu/onnx_mobilenetv2_c++
 ```
 在该目录下下载模型mobilenetv2-12.onnx
-
+```bash
+wget https://github.com/onnx/models/blob/main/validated/vision/classification/mobilenet/model/mobilenetv2-12.onnx
+```
 终端显示如下：  
 ```text
-licheepi@licheepi:~$ ls -la /home/example/th1520_npu/onnx_mobilenetv2_c++/
-total 13648
-drwxr-xr-x 2 licheepi licheepi     4096  4月 23 15:07 .
-drwxr-xr-x 3 licheepi licheepi     4096  4月 23 14:27 ..
--rwxrwxr-x 1 licheepi licheepi 13964571  4月 23 15:07 mobilenetv2-12.onnx
-text
+licheepi@licheepi-virtual-machine:~$ docker start hhb_env
+hhb_env
+licheepi@licheepi-virtual-machine:~$ docker exec -it hhb_env /bin/bash
+root@78776422f7c9:/# cd /home/example/th1520_npu
+root@78776422f7c9:/home/example/th1520_npu# mkdir -p /home/example/th1520_npu/onnx_mobilenetv2_c++
+root@78776422f7c9:/home/example/th1520_npu# cd onnx_mobilenetv2_c++
+
+root@78776422f7c9:/home/example/th1520_npu/onnx_mobilenetv2_c++# wget https://github.com/onnx/models/raw/main/validated/vision/classification/mobilenet/model/mobilenetv2-12.onnx
+--2026-04-28 06:33:19--  https://github.com/onnx/models/raw/main/validated/vision/classification/mobilenet/model/mobilenetv2-12.onnx
+Resolving github.com (github.com)... 20.205.243.166
+Connecting to github.com (github.com)|20.205.243.166|:443... connected.
+HTTP request sent, awaiting response... 302 Found
+Location: https://media.githubusercontent.com/media/onnx/models/main/validated/vision/classification/mobilenet/model/mobilenetv2-12.onnx [following]
+--2026-04-28 06:33:20--  https://media.githubusercontent.com/media/onnx/models/main/validated/vision/classification/mobilenet/model/mobilenetv2-12.onnx
+Resolving media.githubusercontent.com (media.githubusercontent.com)... 185.199.109.133, 185.199.111.133, 185.199.110.133, ...
+Connecting to media.githubusercontent.com (media.githubusercontent.com)|185.199.109.133|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 13964571 (13M) [application/octet-stream]
+Saving to: 'mobilenetv2-12.onnx'
+
+mobilenetv2-12.onn 100%[==============>]  13.32M  1.80MB/s    in 7.6s    
+2026-04-28 06:33:29 (1.76 MB/s) - 'mobilenetv2-12.onnx' saved [13964571/13964571]
+```
 
 获取本次教程所使用的优化版本 opencv 所需的库文件
 ```bash
 cd /home/example/th1520_npu/
 git clone https://github.com/zhangwm-pt/prebuilt_opencv.git
+```
+在终端显示如下：
+```text
+root@78776422f7c9:/home/example/th1520_npu/onnx_mobilenetv2_c++# cd ..
+root@78776422f7c9:/home/example/th1520_npu# git clone https://github.com/zhangwm-pt/prebuilt_opencv.git
+Cloning into 'prebuilt_opencv'...
+remote: Enumerating objects: 461, done.
+remote: Counting objects: 100% (4/4), done.
+remote: Compressing objects: 100% (3/3), done.
+remote: Total 461 (delta 0), reused 4 (delta 0), pack-reused 457 (from 1)
+Receiving objects: 100% (461/461), 47.56 MiB | 8.72 MiB/s, done.
+Resolving deltas: 100% (78/78), done.
+Updating files: 100% (395/395), done.
 ```
 ```bash
 # 1. 进入示例目录
@@ -144,34 +177,30 @@ hhb -D --model-file mobilenetv2-12.onnx \
 ```
 会在终端显示如下：  
 ```text
-root@cebba2cbd428:/workspace# hhb -D --model-file mobilenetv2-12.onnx \
->       --data-scale 0.017 \
->       --data-mean "124 117 104" \
->       --board c920 \
->       --input-name "input" \
->       --output-name "output" \
->       --input-shape "1 3 224 224" \
->       --calibrate-dataset persian_cat.jpg \
->       --quantization-scheme "int8_asym"
-[2026-04-23 09:35:53] (HHB LOG): Start import model.
-[2026-04-23 09:35:54] (HHB LOG): Model import completed! 
-[2026-04-23 09:35:54] (HHB LOG): Start quantization.
-[2026-04-23 09:35:54] (HHB LOG): get calibrate dataset from persian_cat.jpg
-[2026-04-23 09:35:54] (HHB LOG): Start optimization.
-[2026-04-23 09:35:54] (HHB LOG): Optimization completed!
-Calibrating: 100%|████████████████████████████████████████████| 153/153 [00:13<00:00, 11.10it/s]
-[2026-04-23 09:36:08] (HHB LOG): Start conversion to csinn.
-[2026-04-23 09:36:08] (HHB LOG): Conversion completed!
-[2026-04-23 09:36:08] (HHB LOG): Start operator fusion.
-[2026-04-23 09:36:09] (HHB LOG): Operator fusion completed!
-[2026-04-23 09:36:09] (HHB LOG): Start operator split.
-[2026-04-23 09:36:09] (HHB LOG): Operator split completed!
-[2026-04-23 09:36:09] (HHB LOG): Start layout convert.
-[2026-04-23 09:36:09] (HHB LOG): Layout convert completed!
-[2026-04-23 09:36:09] (HHB LOG): Quantization completed!
+root@78776422f7c9:/home/example/th1520_npu# cd /home/example/th1520_npu/onnx_mobilenetv2_c++
 
+root@78776422f7c9:/home/example/th1520_npu/onnx_mobilenetv2_c++# hhb -D --model-file mobilenetv2-12.onnx --data-scale 0.017 --data-mean "124 117 104"  --board th1520  --postprocess save_and_top5 --input-name "input" --output-name "output" --input-shape "1 3 224 224" --calibrate-dataset persian_cat.jpg  --quantization-scheme "int8_asym"
+[2026-04-28 06:34:29] (HHB LOG): Start import model.
+[2026-04-28 06:34:31] (HHB LOG): Model import completed! 
+[2026-04-28 06:34:31] (HHB LOG): Start quantization.
+[2026-04-28 06:34:31] (HHB LOG): get calibrate dataset from persian_cat.jpg
+[2026-04-28 06:34:31] (HHB LOG): Start optimization.
+[2026-04-28 06:34:31] (HHB LOG): Optimization completed!
+Calibrating: 100%|██████████████████████| 153/153 [00:12<00:00, 11.78it/s]
+[2026-04-28 06:34:44] (HHB LOG): Start conversion to csinn.
+[2026-04-28 06:34:44] (HHB LOG): Conversion completed!
+[2026-04-28 06:34:44] (HHB LOG): Start operator fusion.
+[2026-04-28 06:34:45] (HHB LOG): Operator fusion completed!
+[2026-04-28 06:34:45] (HHB LOG): Start operator split.
+[2026-04-28 06:34:45] (HHB LOG): Operator split completed!
+[2026-04-28 06:34:45] (HHB LOG): Start layout convert.
+[2026-04-28 06:34:45] (HHB LOG): Layout convert completed!
+[2026-04-28 06:34:45] (HHB LOG): Quantization completed!
 ```
-
+退出docker环境：
+```bash
+exit
+```
 
 ### **创建并激活 ruyi 虚拟环境**
 
@@ -199,63 +228,72 @@ cd yolox-venv
 source ./bin/ruyi-activate
 
 ```
-### **运行示例并验证结果**
 
-把生成的hhb_out传到开发板：  
+### **使用 ruyi 工具链编译示例代码**
+
+确认交叉编译器可用
 ```bash
-scp -r /home/example/th1520_npu/onnx_mobilenetv2_c++/hhb_out debian@172.16.60.217:/home/debian/
-cd /home/debian/hhb_out
-./hhb_runtime hhb.bm input.0.tensor
+riscv64-plctxthead-linux-gnu-g++ --version
+# 复制整个 onnx_mobilenetv2_c++ 目录（包含 main.cpp, hhb_out 等）
+docker cp hhb_env:/home/example/th1520_npu/onnx_mobilenetv2_c++ .
+
+# 复制 prebuilt_opencv 目录（编译依赖）
+docker cp hhb_env:/home/example/th1520_npu/prebuilt_opencv .
 ```
-在终端输出
+交叉编译：
+```bash
+riscv64-plctxthead-linux-gnu-g++ \
+  main.cpp \
+  -I../prebuilt_opencv/include/opencv4 \
+  -L../prebuilt_opencv/lib \
+  -L../prebuilt_opencv/lib/opencv4/3rdparty \
+  -lopencv_imgproc \
+  -lopencv_imgcodecs \
+  -lopencv_core \
+  -llibjpeg-turbo \
+  -llibwebp \
+  -llibpng \
+  -llibtiff \
+  -llibopenjp2 \
+  -lzlib \
+  -lcsi_cv \
+  -latomic \
+  -ldl \
+  -lpthread \
+  -lrt \
+  -static \
+  -o mobilenetv2_example
+```
+
+在终端显示如下：
 ```text
-
-«Ruyi yolox-venv» debian@revyos-lpi4a:~$ cd /home/debian/hhb_out
-«Ruyi yolox-venv» debian@revyos-lpi4a:~/hhb_out$ chmod +x hhb_runtime
-«Ruyi yolox-venv» debian@revyos-lpi4a:~/hhb_out$ ./hhb_runtime
-Please set valide args: ./model.elf hhb.bm [data1 data2 ...]|[.txt]
-«Ruyi yolox-venv» debian@revyos-lpi4a:~/hhb_out$ ls -la
-total 24596
-drwxr-xr-x  2 debian debian    4096 Apr 23 16:52 .
-drwxr-xr-x 12 debian debian    4096 Apr 23 16:52 ..
--rw-r--r--  1 debian debian     361 Apr 23 16:52 graph_info.bin
--rw-r--r--  1 debian debian 3555144 Apr 23 17:37 hhb.bm
--rwxr-xr-x  1 debian debian 5247952 Apr 23 17:37 hhb_jit
--rw-r--r--  1 debian debian     244 Apr 23 17:37 hhb_origin_cmd.txt
--rwxr-xr-x  1 debian debian 6362848 Apr 23 17:37 hhb_runtime
--rwxr-xr-x  1 debian debian  209976 Apr 23 16:52 hhb_th1520_x86_jit
--rwxr-xr-x  1 debian debian  783312 Apr 23 16:52 hhb_th1520_x86_runtime
--rw-r--r--  1 debian debian  602112 Apr 23 17:37 input.0.bin
--rw-r--r--  1 debian debian 2941691 Apr 23 17:37 input.0.tensor
--rw-r--r--  1 debian debian    4936 Apr 23 17:37 io.c
--rw-r--r--  1 debian debian    1539 Apr 23 17:37 io.h
--rw-r--r--  1 debian debian    1943 Apr 23 17:37 jit.c
--rw-r--r--  1 debian debian   18872 Apr 23 17:37 jit.o
--rw-r--r--  1 debian debian    7522 Apr 23 17:37 main.c
--rw-r--r--  1 debian debian   78816 Apr 23 17:37 main.o
--rw-r--r--  1 debian debian  137776 Apr 23 17:37 model.c
--rw-r--r--  1 debian debian 1609752 Apr 23 17:37 model.o
--rw-r--r--  1 debian debian 3546952 Apr 23 17:37 model.params
--rw-r--r--  1 debian debian   20086 Apr 23 17:37 process.c
--rw-r--r--  1 debian debian    2040 Apr 23 17:37 process.h                                              ./hhb_runtime hhb.bm input.0.tensori4a:~/hhb_out$ ./hhb_runtime hhb.bm input.0.tensor
-Run graph execution time: 5087.07324ms, FPS=0.20
-
-=== tensor info ===
-shape: 1 3 224 224
-data pointer: 0x3fb7ff6010
-
-=== tensor info ===
-shape: 1 1000
-data pointer: 0x1cde30
-The max_value of output: 10.065117
-The min_value of output: -9.073855
-The mean_value of output: -0.000381
-The std_value of output: 8.266551
- ============ top5: ===========
-716: 10.065117
-794: 8.158845
-489: 7.853841
-549: 7.625089
-695: 7.625089
-
+«Ruyi venv-sipeed» licheepi@licheepi-virtual-machine:~/onnx_mobilenetv2_c++$ riscv64-plctxthead-linux-gnu-g++ \
+  main.cpp \
+  -I../prebuilt_opencv/include/opencv4 \
+  -L../prebuilt_opencv/lib \
+  -L../prebuilt_opencv/lib/opencv4/3rdparty \
+  -lopencv_imgproc \
+  -lopencv_imgcodecs \
+  -lopencv_core \
+  -llibjpeg-turbo \
+  -llibwebp \
+  -llibpng \
+  -llibtiff \
+  -llibopenjp2 \
+  -lzlib \
+  -lcsi_cv \
+  -latomic \
+  -ldl \
+  -lpthread \
+  -lrt \
+  -static \
+  -o mobilenetv2_example
+/home/licheepi/.local/share/ruyi/binaries/x86_64/gnu-plct-xthead-3.1.0-ruyi.20250526/bin/../lib/gcc/riscv64-plctxthead-linux-gnu/14.1.1/../../../../riscv64-plctxthead-linux-gnu/bin/ld: ../prebuilt_opencv/lib/libopencv_core.a(filesystem.cpp.o): in function `cv::plugin::impl::DynamicLib::libraryLoad(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)':
+filesystem.cpp:(.text._ZN2cv6plugin4impl10DynamicLib11libraryLoadERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE+0x4e): warning: Using 'dlopen' in statically linked applications requires at runtime the shared libraries from the glibc version used for linking
+«Ruyi venv-sipeed» licheepi@licheepi-virtual-machine:~/onnx_mobilenetv2_c++$ ls -lh mobilenetv2_example
+-rwxrwxr-x 1 licheepi licheepi 16M  4月 28 14:47 mobilenetv2_example
+«Ruyi venv-sipeed» licheepi@licheepi-virtual-machine:~/onnx_mobilenetv2_c++$ 
 ```
+
+### **运行示例并验证结果**
+暂未验证
