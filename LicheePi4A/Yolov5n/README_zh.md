@@ -166,7 +166,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 ## **YOLOV5n测试示例**
 ### **示例描述和硬件环境准备**
-示例描述：YOLOv5n 是轻量级目标检测模型，本示例在 Lichee Pi 4A 上运行 YOLOv5n，验证 RuyiSDK 工具链的 NPU 交叉编译能力。
+示例描述：YOLOv5n 是轻量级目标检测模型，本示例在 Lichee Pi 4A 上运行 YOLOv5n，验证 RuyiSDK 工具链的 NPU 交叉编译能力。  
 硬件环境：Lichee Pi 4A (16GB)   
 软件环境：RuyiSDK 0.47.0，HHB 2.6.17
 
@@ -337,8 +337,9 @@ chmod +x yolov5n_example
 ```
 
 验证结果：  
+```bash
 Run graph execution time: 0.00133ms, FPS=749625.19
-
+```
 程序推理完成后因后处理代码与当前 SHL 库版本存在兼容性问题而崩溃，检测结果未能完全输出。但 NPU 推理核心功能已验证成功，RuyiSDK 工具链的交叉编译能力通过验证。  
 
 若需要完整的推理输出，可使用 HHB 直接生成的 hhb_runtime 程序：  
