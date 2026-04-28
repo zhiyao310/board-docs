@@ -9,7 +9,7 @@
 
 | status | AI |
 
-| last\_update | 2026-04-24 |
+| last\_update | 2026-04-27 |
 
 | model | Lichee Pi 4A |
 
